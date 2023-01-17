@@ -8,6 +8,7 @@ Measures the real size of an object using OpenCv and Aruco Marker.
 
 # Output
 Size of an object in a pixels: [Measure size pixel](/output/size-of-an-object-in-pixel.png)
+
 Size of an object in cm: [Measure size in cm](/output/size-of-object-in-cm_1.png)
 
 # License
