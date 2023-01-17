@@ -9,6 +9,27 @@ detector = objDetector()
 image_path = 'images/image2.jpg'
 img = cv2.imread(image_path)
 
+# Load aruco detector
+parameters = cv2.aruco.DetectorParameters_create()
+aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_50)
+
+# Get Aruco marker
+corners, _, _ = cv2.aruco.detectMarkers(img, aruco_dict, parameters=parameters)
+
+# Draw polygon around the marker
+int_corners = np.int0(corners)
+cv2.polylines(img, int_corners, True, (0, 0, 255), 5)
+
+if corners:
+    #Aruco Perimeter
+    aruco_perimeter = cv2.arcLength(corners[0], True)
+
+    # Pixel to cm ratio
+    pixel_cm_ratio = aruco_perimeter / 20
+else:
+    pixel_cm_ratio = 29.526773834228514
+
+
 # Load Object detector module
 contours = detector.detect_object(img)
 
@@ -28,9 +49,13 @@ for cnt in contours:
     # draw a rectangle box in objects
     cv2.polylines(img, [box], True, (0, 255, 0), 2)
 
-    # display an image size 
-    cv2.putText(img, f'Width: {round(w, 1)}', (int(x), int(y)-50), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 2)
-    cv2.putText(img, f'Height: {round(h, 1)}', (int(x), int(y)-30), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 2)
+    # Get Width and Height of the Objects by applying the Ratio pixel to cm
+    object_width = w / pixel_cm_ratio
+    object_height = h / pixel_cm_ratio
+
+    #display an image size 
+    cv2.putText(img, f'Width: {round(object_width, 1)} cm', (int(x), int(y)-50), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1)
+    cv2.putText(img, f'Height: {round(object_height, 1)} cm', (int(x), int(y)-30), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1)
 
 cv2.imshow("Measure Object Size", img)
 
